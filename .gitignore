@@ -1,0 +1,32 @@
+# 원본·중간 데이터 (용량 큼 — ENA/NCBI에서 재다운로드 가능)
+data/
+sra_cache/
+*.fastq
+*.fastq.gz
+*.fastq.gz.verified
+*.sra
+*.bam
+*.bai
+
+# 1차 탐색용 서브샘플 실행 결과 (가닥 판별 결과만 보존)
+results/*
+!results/strand_check/
+results/strand_check/*
+!results/strand_check/strand_check.tsv
+!results/strand_check/decision.txt
+
+# 최종 결과 중 대용량·로그 파일
+results_full/bam/*
+!results_full/bam/alignment_summary.tsv
+results_full/qc/raw/
+results_full/qc/trimmed/
+results_full/qc/fastp/
+results_full/qc/multiqc_data/
+results_full/qc/fastqc_errors.log
+results_full/full_output.log
+results_full/run_log.txt
+
+# 기타
+.DS_Store
+*.bak
+__pycache__/

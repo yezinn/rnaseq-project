@@ -1,0 +1,15 @@
+Status	results_full/bam/SRR6004392.bam	results_full/bam/SRR6004399.bam	results_full/bam/SRR6004394.bam	results_full/bam/SRR6004397.bam	results_full/bam/SRR6004393.bam	results_full/bam/SRR6004396.bam	results_full/bam/SRR6004398.bam	results_full/bam/SRR6004395.bam
+Assigned	12213365	14534530	13603933	11780443	15172978	10263932	14035553	8697549
+Unassigned_Unmapped	1301256	817684	1311957	851892	1902806	922410	1200746	1020162
+Unassigned_Read_Type	0	0	0	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0	0	0
+Unassigned_MultiMapping	0	0	0	0	0	0	0	0
+Unassigned_Secondary	0	0	0	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0	0	0	0
+Unassigned_NoFeatures	1235409	883493	1541332	1039676	1499861	949940	1470415	989659
+Unassigned_Overlapping_Length	0	0	0	0	0	0	0	0
+Unassigned_Ambiguity	128890	113474	135087	147348	163673	126859	178574	93135

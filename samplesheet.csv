@@ -1,0 +1,9 @@
+sample,run,condition,time,title
+wild_type_replicate_1_dawn,SRR6004392,WT,dawn,wild type replicate 1 dawn
+rel_replicate_2_dusk,SRR6004399,rel_mutant,dusk,rel- replicate 2 dusk
+wild_type_replicate_1_dusk,SRR6004394,WT,dusk,wild type replicate 1 dusk
+rel_replicate_2_dawn,SRR6004397,rel_mutant,dawn,rel- replicate 2 dawn
+wild_type_replicate_2_dawn,SRR6004393,WT,dawn,wild type replicate 2 dawn
+rel_replicate_1_dawn,SRR6004396,rel_mutant,dawn,rel- replicate 1 dawn
+rel_replicate_1_dusk,SRR6004398,rel_mutant,dusk,rel- replicate 1 dusk
+wild_type_replicate_2_dusk,SRR6004395,WT,dusk,wild type replicate 2 dusk
