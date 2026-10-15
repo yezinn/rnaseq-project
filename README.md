@@ -2,6 +2,13 @@
 
 공개 RNA-seq 원본 데이터(FASTQ)를 내려받아 **QC → 트리밍 → 참조 게놈 정렬 → 유전자 정량 → 차등발현 분석**까지 직접 수행하고, 원 연구의 결론을 재현할 수 있는지 검증하는 프로젝트.
 
+## 요약
+
+- 공개 RNA-seq 원본 데이터 8샘플(약 1.2억 리드)을 FASTQ부터 직접 처리하는 재현 가능한 파이프라인을 구축 (Bash + Python + R)
+- QC(fastp/FastQC) → 정렬(bowtie2, 정렬률 90~95%) → 정량(featureCounts) → 차등발현(DESeq2)
+- 가닥 특이성을 할당률 비교로 판별(reverse-stranded)하고, 시점(dawn/dusk)을 공변량으로 보정한 설계로 **368개 차등발현 유전자** 도출
+- 결손 유전자(*rel*)의 발현 소실을 **양성 대조**로 확인하고, 다운샘플·전체 리드 결과 간 재현성(log2FC r = 0.91) 검증
+
 ## 데이터
 
 | 항목 | 내용 |
@@ -30,27 +37,10 @@ FASTQ (ENA / NCBI SRA) ─ seqtk(선택: 서브샘플) ─ FastQC ─ fastp ─ 
 conda env create -f environment.yml
 conda activate synecho-rnaseq
 
-bash run_all.sh      # 1회차: runs.tsv / samplesheet.csv 생성 후 멈춤
-# → samplesheet.csv 의 condition 열(WT / rel_mutant)을 GEO 샘플 설명과 대조해 확인·수정
-#   분석에 안 쓸 샘플 행은 지우면 다운로드도 생략됨
-bash run_all.sh      # 2회차: 전체 실행
-```
-
-KEGG 농축 분석(선택)은 기본 환경에 없음. 메인 결과가 나온 뒤 필요하면 추가 설치:
-
-```bash
-conda install -n synecho-rnaseq -c conda-forge -c bioconda bioconductor-clusterprofiler
-```
-
-Apple Silicon에서 일부 툴의 arm64 빌드가 없어 설치가 실패하면 `CONDA_SUBDIR=osx-64 conda env create -f environment.yml` 로 Intel 빌드를 설치(Rosetta 실행).
-
-`config.sh`의 `SUBSAMPLE_READS=2000000` 은 빠른 1차 실행용(결과: `results/`).
-
-최종 실행 (가닥 판별 → 전체 리드):
-
-```bash
-bash scripts/07_check_strand.sh                      # -s 0/1/2 할당률 비교 → config.sh 의 STRAND 자동 기록
-SUBSAMPLE_READS=0 bash run_all.sh                   # 결과: results_full/
+bash run_all.sh                     # 1회차: ENA에서 샘플 목록(runs.tsv, samplesheet.csv) 생성 후 멈춤 → 조건 확인
+bash run_all.sh                     # 2회차: 서브샘플(샘플당 200만 리드)로 빠른 1차 분석
+bash scripts/07_check_strand.sh     # 가닥 특이성 판별 → config.sh 의 STRAND 자동 기록
+SUBSAMPLE_READS=0 bash run_all.sh   # 전체 리드 최종 분석 → results_full/
 ```
 
 ## 결과물 (저장소에 포함된 파일)
@@ -95,17 +85,8 @@ SUBSAMPLE_READS=0 bash run_all.sh                   # 결과: results_full/
 
 **원 연구와의 비교**: 전체 유전자의 약 13%(368/2,757)가 2배 이상 변하고 PCA의 최대 변동축이 genotype → ppGpp가 전역 전사 조절에 필요하다는 원 연구 결론과 방향 일치. (원 논문 유전자 목록과의 직접 대조는 미실시)
 
-## 점검 포인트 (해석할 때 반드시 확인)
-
-1. **정렬률**이 낮으면(예: <70%) rRNA 오염, 잘못된 참조, 어댑터 잔존을 의심.
-2. **featureCounts 가닥 설정(-s)**: `-s 0/1/2`로 각각 돌려 Assigned 비율이 가장 높은 값을 채택하고 근거를 기록.
-3. **rRNA 비율**: 세균 RNA-seq은 rRNA 제거가 불완전한 경우가 많아 상위 count 유전자를 확인.
-4. **반복수**: 그룹당 반복이 2개 이하이면 통계 검정력이 낮다는 점을 한계로 명시.
-
 ## 한계
 
 - 그룹당 반복 2개(시점별)로 통계 검정력에 한계.
-- 유전자 ID가 RefSeq 신규 locus_tag(SYNPCC7942_RS…)라 KEGG(`syf`, 구 locus_tag Synpcc7942_…) 농축 분석 전에 GFF의 old_locus_tag로 변환 필요.
-
+- 유전자 ID가 RefSeq 신규 locus_tag(SYNPCC7942_RS…)라 KEGG(`syf`, 구 locus_tag Synpcc7942_…) 농축 분석 전에 GFF의 old_locus_tag로 변환 필요 (경로 농축 분석은 미실시).
 - 공개 데이터를 이용한 **in silico 재분석**이며, 시료 처리·라이브러리 제작 등 wet 단계는 수행하지 않음.
-- 서브샘플링 결과는 탐색용이며, 최종 수치는 전체 리드 기준으로 보고.
